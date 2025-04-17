@@ -2,6 +2,7 @@ import type { Route } from "./+types/home";
 import { useTRPC } from "~/trpc/trpcClient";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect, useRef } from "react";
+import IndexFiles from "./indexing/IndexFiles";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -34,7 +35,15 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
+      <div
+        className="flex 
+          flex-col 
+          items-center 
+          justify-center 
+          min-h-screen 
+          space-y-4
+        "
+      >
         <input
           ref={searchInputRef}
           type="text"
@@ -52,6 +61,7 @@ export default function Home() {
             focus:border-emerald-300
           "
         />
+        <IndexFiles />
       </div>
     </>
   );

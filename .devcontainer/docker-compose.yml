@@ -7,6 +7,7 @@ services:
       - ../:/app
       - home_cache:/home/developer
       - ~/.ssh:/home/developer/.ssh:ro
+      - ~/projects/faculty:/app/files/faculty:ro
     environment:
       - DATABASE_URL=postgres://siteuser:postgresewvraer@db:5432/my_db
     env_file:
@@ -21,6 +22,7 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - ../:/app
+      - ~/projects/faculty:/app/files/faculty:ro
     working_dir: /app
     ports:
       - 5173:5173
