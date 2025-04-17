@@ -9,6 +9,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const source = opts.headers.get('x-trpc-source') ?? 'unknown'
   console.log('>>> tRPC Request from', source)
 
+  // auth stuff could go here, it runs on server
   return {
   };
 };

@@ -1,0 +1,45 @@
+services:
+  editor:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ../:/app
+      - home_cache:/home/developer
+      - ~/.ssh:/home/developer/.ssh:ro
+    environment:
+      - DATABASE_URL=postgres://siteuser:postgresewvraer@db:5432/my_db
+    env_file:
+      - .env
+    command: |
+      bash -c '
+        tail -f /dev/null
+      '
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ../:/app
+    working_dir: /app
+    ports:
+      - 5173:5173
+    entrypoint: sh
+    command: |
+      -c "
+        cd /app/src
+        pnpm install
+        pnpm run dev --host
+      "
+  db:
+    image: timescale/timescaledb-ha:pg17 
+    environment:
+      - POSTGRES_USER=siteuser
+      - POSTGRES_PASSWORD=postgresewvraer
+      - POSTGRES_DB=my_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+  home_cache:

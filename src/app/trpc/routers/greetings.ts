@@ -1,5 +1,5 @@
 import type { TRPCRouterRecord } from "@trpc/server";
-import { publicProcedure } from "../trpc";
+import { publicProcedure } from "../utils/trpc";
 
 export const greetingRouter = {
   hello: publicProcedure.query(() => {

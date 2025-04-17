@@ -9,7 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { TRPCReactProvider } from "./trpc/react";
+import { TRPCReactProvider } from "./trpc/trpcClient";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

@@ -1,4 +1,4 @@
-import { greetingRouter } from './routers/greetings'
+import { greetingRouter } from '../routers/greetings'
 import { createTRPCRouter } from './trpc'
 
 
