@@ -63,6 +63,7 @@ export async function insertEmbedding(
   fileContents: string,
   embedding: number[]
 ): Promise<void> {
+  console.log("embedding", embedding);
   await db.none(
     `
       INSERT INTO embeddings (file_name, file_contents, embedding)

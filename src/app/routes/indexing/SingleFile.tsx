@@ -32,22 +32,41 @@ export function SingleFile({ fileName }: { fileName: string }) {
       )}
       {fileName}
 
-      <button
-        onClick={() => {
-          if (!fileContentsQuery.data) {
-            console.log("cannot make embedding without data");
-            return;
-          }
-          makeEmbeddingMutation.mutate({
-            fileName,
-            fileContents: fileContentsQuery.data.content,
-          });
-        }}
-        className="ml-2 px-3 py-1 text-sm font-medium text-white bg-gray-800 rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
-        disabled={!fileContentsQuery.data}
-      >
-        Run Embedding
-      </button>
+      {!embeddingQuery.data && (
+        <button
+          onClick={() => {
+            if (!fileContentsQuery.data) {
+              console.log("cannot make embedding without data");
+              return;
+            }
+            makeEmbeddingMutation.mutate({
+              fileName,
+              fileContents: fileContentsQuery.data.content,
+            });
+          }}
+          className="ml-2 px-3 py-1 text-sm font-medium text-white bg-gray-800 rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
+          disabled={!fileContentsQuery.data}
+        >
+          Run Embedding
+        </button>
+      )}
+      {embeddingQuery.data && (
+        <div 
+          className="ml-2 
+               px-3 
+               py-1 
+               text-sm 
+               font-medium 
+               text-gray-200 
+               bg-green-900 
+               border-2 
+               border-green-800 
+               rounded-full 
+               dark:bg-green-950 
+               dark:text-gray-300">
+          embeddings processed
+        </div>
+      )}
 
       {fileContentsQuery.isPending && <Spinner />}
       {embeddingQuery.isPending && <Spinner />}
