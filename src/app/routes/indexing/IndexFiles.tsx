@@ -10,11 +10,11 @@ export default function IndexFiles() {
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">Index Files</h1>
-      <ul className="list-disc pl-5">
+      <section className="list-disc pl-5">
         {fileNames?.map((fileName) => (
           <SingleFile fileName={fileName} key={fileName} />
         ))}
-      </ul>
+      </section>
       {!fileNames && <div>no files returned</div>}
     </div>
   );
