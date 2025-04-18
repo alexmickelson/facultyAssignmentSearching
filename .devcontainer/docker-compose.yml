@@ -1,5 +1,6 @@
 services:
   editor:
+    container_name: editor_search
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -17,6 +18,7 @@ services:
         tail -f /dev/null
       '
   app:
+    container_name: app_search
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -34,6 +36,7 @@ services:
         pnpm run dev --host
       "
   db:
+    container_name: db_search
     image: timescale/timescaledb-ha:pg17 
     environment:
       - POSTGRES_USER=siteuser

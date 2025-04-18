@@ -1,5 +1,6 @@
 import pgpromise from "pg-promise";
 import pgvector from "pgvector/pg-promise";
+import { z } from "zod";
 
 // https://github.com/pgvector/pgvector-node?tab=readme-ov-file#pg-promise
 
@@ -18,12 +19,15 @@ const db = pgp("postgres://siteuser:postgresewvraer@db:5432/my_db");
 //   file_contents text,
 //   embedding vector(768) --tutorial had (1536) for chatpt
 // );
-export interface Embedding {
-  id: number;
-  fileName: string;
-  fileContents: string;
-  embedding: number[]; // Representing the vector as an array of numbers
-}
+export const EmbeddingSchema = z.object({
+  id: z.number(),
+  fileName: z.string(),
+  fileContents: z.string(),
+  embedding: z.array(z.number()), // Representing the vector as an array of numbers
+});
+
+export type Embedding = z.infer<typeof EmbeddingSchema>;
+
 export async function getFileByName(
   fileName: string
 ): Promise<Embedding | null> {
@@ -52,4 +56,22 @@ export async function getFileByName(
   }
 
   return null;
+}
+
+export async function insertEmbedding(
+  fileName: string,
+  fileContents: string,
+  embedding: number[]
+): Promise<void> {
+  await db.none(
+    `
+      INSERT INTO embeddings (file_name, file_contents, embedding)
+      VALUES ($<fileName>, $<fileContents>, $<embedding>)
+    `,
+    {
+      fileName,
+      fileContents,
+      embedding,
+    }
+  );
 }

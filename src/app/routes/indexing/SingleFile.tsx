@@ -2,81 +2,56 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { useTRPC } from "~/trpc/trpcClient";
 import { pipeline, Tensor } from "@huggingface/transformers";
 import { useState, useEffect } from "react";
+import { useMakeEmbeddingMutation } from "./embeddingHook";
 
 export function Spinner() {
   return (
-    <div
-      className=" animate-spin  rounded-full  h-5  w-5  border-t-2  border-b-2  border-gray-200"
-    ></div>
+    <div className=" animate-spin  rounded-full  h-5  w-5  border-t-2  border-b-2  border-gray-200"></div>
   );
 }
 
 export function SingleFile({ fileName }: { fileName: string }) {
   const trpc = useTRPC();
+  const fileContentsQuery = useQuery(
+    trpc.files.getFileContents.queryOptions(fileName)
+  );
   const embeddingQuery = useQuery(
     trpc.files.getEmbedding.queryOptions(fileName)
   );
-  const embeddingStatus = useCreateEmbedding(
-    fileName,
-    embeddingQuery.data === null
-  );
+
+  const makeEmbeddingMutation = useMakeEmbeddingMutation();
 
   return (
     <div className="mb-2 flex items-center">
-    {embeddingQuery.isLoading ? (
-      <Spinner />
-    ) : embeddingQuery.data !== null ? (
-      <div className="h-3 w-3 rounded-full bg-green-700"></div>
-    ) : (
-      <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
-    )}
+      {embeddingQuery.isLoading ? (
+        <Spinner />
+      ) : embeddingQuery.data !== null ? (
+        <div className="h-3 w-3 rounded-full bg-green-700"></div>
+      ) : (
+        <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
+      )}
       {fileName}
-      <div>{embeddingStatus.message}</div>
+
+      <button
+        onClick={() => {
+          if (!fileContentsQuery.data) {
+            console.log("cannot make embedding without data");
+            return;
+          }
+          makeEmbeddingMutation.mutate({
+            fileName,
+            fileContents: fileContentsQuery.data.content,
+          });
+        }}
+        className="ml-2 px-3 py-1 text-sm font-medium text-white bg-gray-800 rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
+        disabled={!fileContentsQuery.data}
+      >
+        Run Embedding
+      </button>
+
+      {fileContentsQuery.isPending && <Spinner />}
+      {embeddingQuery.isPending && <Spinner />}
+      {makeEmbeddingMutation.isPending && <Spinner />}
     </div>
   );
-}
-
-function useCreateEmbedding(filePath: string, embeddingIsProcessed: boolean) {
-  const [embedding, setEmbedding] = useState<number[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<number[]>();
-
-  const trpc = useTRPC();
-  const { data: contentObject } = useQuery(
-    trpc.files.getFileContents.queryOptions(filePath)
-  );
-
-  useEffect(() => {
-    async function generateEmbedding() {
-      // if (embeddingIsProcessed) return;
-      if (result) return;
-      if (isLoading) return;
-      if (!contentObject) return;
-      console.log("starting embedding");
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const model = "Xenova/all-MiniLM-L6-v2";
-        const pipelineModel = await pipeline("feature-extraction", model  , {
-          // device: "webgpu",
-        });
-        const pipelineResult = await pipelineModel(contentObject.content);
-        console.log("feature extraction result", pipelineResult.data);
-        setResult(pipelineResult.data);
-        // setEmbedding(result[0]); // Assuming the first result is the embedding
-      } catch (err) {
-        setError((err as Error).message);
-        console.error("Error generating embedding:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    generateEmbedding();
-  }, [filePath, embeddingIsProcessed, contentObject, isLoading]);
-
-  return { embedding, isLoading, error, message };
 }

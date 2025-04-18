@@ -4,7 +4,11 @@ import { readdirSync } from "fs";
 import { join } from "path";
 import { z } from "zod";
 import { readFileSync } from "fs";
-
+import {
+  EmbeddingSchema,
+  getFileByName,
+  insertEmbedding,
+} from "~/db/dbService";
 export const filesRouter = {
   filesList: publicProcedure.query(() => {
     const directoryPath = "../files";
@@ -24,11 +28,20 @@ export const filesRouter = {
     }
   }),
   getEmbedding: publicProcedure.input(z.string()).query(async ({ input }) => {
-    // embeddings should be a list of paragraphs in the file?...
-    const { getFileByName } = await import("../../db/dbService");
     const embedding = await getFileByName(input);
     return embedding;
   }),
+  storeEmbedding: publicProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+        fileContents: z.string(),
+        embedding: z.array(z.number()),
+      })
+    )
+    .mutation(async ({ input: { fileName, fileContents, embedding } }) => {
+      await insertEmbedding(fileName, fileContents, embedding);
+    }),
 } satisfies TRPCRouterRecord;
 
 function getDirectoryStructure(dirPath: string): string[] {
