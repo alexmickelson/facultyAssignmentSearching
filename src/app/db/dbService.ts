@@ -14,13 +14,12 @@ const db = pgp("postgres://siteuser:postgresewvraer@db:5432/my_db");
 
 // SCHEMA
 // CREATE TABLE embeddings (
-//   id bigserial primary key,
-//   file_name text,
+//   file_name text primary key,
 //   file_contents text,
-//   embedding vector(768) --tutorial had (1536) for chatpt
+//   embedding vector(768)
 // );
+
 export const EmbeddingSchema = z.object({
-  id: z.number(),
   fileName: z.string(),
   fileContents: z.string(),
   embedding: z.array(z.number()), // Representing the vector as an array of numbers
@@ -34,10 +33,9 @@ export async function getFileByName(
   const result = await db.oneOrNone(
     `
     SELECT 
-      id, 
-      file_name AS fileName, 
-      file_contents AS fileContents, 
-      embedding 
+      file_name AS "fileName", 
+      file_contents AS "fileContents", 
+      embedding AS "embedding" 
     FROM 
       embeddings 
     WHERE 
@@ -48,7 +46,6 @@ export async function getFileByName(
 
   if (result) {
     return {
-      id: result.id,
       fileName: result.fileName,
       fileContents: result.fileContents,
       embedding: result.embedding,

@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@huggingface/transformers": "3.5.0",
+    "@langchain/core": "^0.3.45",
+    "@langchain/textsplitters": "^0.1.0",
     "@react-router/node": "^7.5.0",
     "@react-router/serve": "^7.5.0",
     "@tanstack/react-query": "^5.74.3",

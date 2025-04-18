@@ -9,11 +9,12 @@ import {
   getFileByName,
   insertEmbedding,
 } from "~/db/dbService";
+
 export const filesRouter = {
   filesList: publicProcedure.query(() => {
     const directoryPath = "../files";
     const files = getDirectoryStructure(directoryPath);
-    return files.filter((f) => f.includes("2024-fall-alex")).splice(0, 1);
+    return files.filter((f) => f.includes("2024-fall-alex")).splice(0, 10);
   }),
   getFileContents: publicProcedure.input(z.string()).query(({ input }) => {
     try {
