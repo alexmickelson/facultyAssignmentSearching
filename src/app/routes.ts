@@ -1,6 +1,6 @@
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
-  index("routes/home.tsx"),
-  route('/api/trpc/*', 'routes/api/trpc.ts'),
+  index("pages/home.tsx"),
+  route('/api/trpc/*', 'pages/api/trpc.ts'),
 ] satisfies RouteConfig;

@@ -1,9 +1,5 @@
 import type { Route } from "../+types/root";
-import { useTRPC } from "~/trpc/trpcClient";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import IndexFiles from "./indexing/IndexFiles";
-import SearchInput from "./search/SearchInput";
 import SearchForm from "./search/SearchForm";
 
 export function meta({}: Route.MetaArgs) {
@@ -14,12 +10,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const trpc = useTRPC();
-  const [searchValue, setSearchValue] = useState("");
-
-  const { data } = useQuery(trpc.greeting.hello.queryOptions());
-  console.log("trpc greeting", data);
-
   return (
     <>
       <div

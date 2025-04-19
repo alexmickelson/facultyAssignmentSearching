@@ -72,6 +72,7 @@ const links = [
   }),
   httpBatchLink({
     transformer: SuperJSON,
+    maxURLLength: 2083,
     url: getBaseUrl() + "/api/trpc",
     headers() {
       const headers = new Headers();

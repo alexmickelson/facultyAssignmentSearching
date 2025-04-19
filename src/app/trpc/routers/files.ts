@@ -6,6 +6,7 @@ import { z } from "zod";
 import { readFileSync } from "fs";
 import {
   EmbeddingSchema,
+  getEmbeddingsBySimilarity,
   getFileByName,
   insertEmbedding,
 } from "~/db/dbService";
@@ -42,6 +43,17 @@ export const filesRouter = {
     )
     .mutation(async ({ input: { fileName, fileContents, embedding } }) => {
       await insertEmbedding(fileName, fileContents, embedding);
+    }),
+  getSimilarFiles: publicProcedure
+    .input(
+      z.object({
+        embedding: z.array(z.number()),
+        limit: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input: { embedding, limit } }) => {
+      const embeddings = await getEmbeddingsBySimilarity(embedding, limit);
+      return embeddings;
     }),
 } satisfies TRPCRouterRecord;
 

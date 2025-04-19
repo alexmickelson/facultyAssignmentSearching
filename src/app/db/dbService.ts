@@ -73,3 +73,32 @@ export async function insertEmbedding(
     }
   );
 }
+
+export async function getEmbeddingsBySimilarity(
+  queryEmbedding: number[],
+  limit: number = 60
+): Promise<
+  {
+    fileName: string;
+    fileContents: string;
+    embedding: number[];
+    similarity: number;
+  }[]
+> {
+  const results = await db.manyOrNone(
+    `
+    SELECT 
+      file_name AS "fileName", 
+      file_contents AS "fileContents", 
+      embedding AS "embedding",
+      1 - (embedding <=> $<queryEmbedding>::vector) AS similarity
+    FROM 
+      embeddings
+    ORDER BY 
+      embedding <=> $<queryEmbedding>::vector asc
+    LIMIT $<limit>
+    `,
+    { queryEmbedding, limit }
+  );
+  return results;
+}

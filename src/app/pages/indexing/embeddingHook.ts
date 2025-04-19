@@ -34,7 +34,7 @@ export const useMakeEmbeddingMutation = () => {
   });
 };
 
-async function getEmbeddings(contentObject: {
+export async function getEmbeddings(contentObject: {
   content: string;
 }): Promise<number[]> {
   // const splitter = new CharacterTextSplitter({

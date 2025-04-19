@@ -30,7 +30,7 @@ export default function SearchInput({ value, onChange }: SearchInputProps) {
       onChange={(e) => onChange(e.target.value)}
       placeholder="Search... (Ctrl+K to focus)"
       className="
-        w-1/2
+        flex-1
         px-4
         py-2
         border
