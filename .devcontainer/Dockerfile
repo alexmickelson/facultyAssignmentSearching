@@ -21,4 +21,4 @@ RUN fish
 
 COPY ./config.fish /home/developer/.config/fish/config.fish
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["tail", "-f", "/dev/null"]l

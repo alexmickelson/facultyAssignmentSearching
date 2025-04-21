@@ -54,7 +54,6 @@ export async function getFileByName(
 
   return null;
 }
-
 export async function insertEmbedding(
   fileName: string,
   fileContents: string,
@@ -65,6 +64,10 @@ export async function insertEmbedding(
     `
       INSERT INTO embeddings (file_name, file_contents, embedding)
       VALUES ($<fileName>, $<fileContents>, $<embedding>)
+      ON CONFLICT (file_name) 
+      DO UPDATE SET 
+        file_contents = EXCLUDED.file_contents,
+        embedding = EXCLUDED.embedding
     `,
     {
       fileName,
