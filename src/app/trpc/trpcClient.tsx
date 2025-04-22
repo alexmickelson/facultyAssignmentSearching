@@ -65,14 +65,14 @@ const getBaseUrl = () => {
 };
 
 const links = [
-  loggerLink({
-    enabled: (op) =>
-      process.env.NODE_ENV === "development" ||
-      (op.direction === "down" && op.result instanceof Error),
-  }),
+  // loggerLink({
+  //   enabled: (op) =>
+  //     process.env.NODE_ENV === "development" ||
+  //     (op.direction === "down" && op.result instanceof Error),
+  // }),
   httpBatchLink({
     transformer: SuperJSON,
-    maxURLLength: 2083,
+    maxURLLength: 10_000,
     url: getBaseUrl() + "/api/trpc",
     headers() {
       const headers = new Headers();

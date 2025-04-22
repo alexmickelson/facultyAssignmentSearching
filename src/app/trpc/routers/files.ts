@@ -20,7 +20,8 @@ export const filesRouter = {
       .filter(
       (f) =>
         !f.includes("/bin/") &&
-        !f.includes("/obj/") &&
+      !f.includes("/obj/") &&
+      !f.includes("node_modules") &&
         // f.includes("2024-fall-alex") &&
         f.endsWith(".md")
       );
