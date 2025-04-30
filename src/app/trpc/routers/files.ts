@@ -10,21 +10,22 @@ import {
   getFileByName,
   insertEmbedding,
 } from "~/db/dbService";
-import { getEmbeddings } from "~/pages/indexing/embeeddingUtils";
+import { getEmbeddings } from "~/pages/indexing/embeddingUtils";
 
 export const filesRouter = {
   filesList: publicProcedure.query(() => {
     const directoryPath = "../files";
     const files = getDirectoryStructure(directoryPath);
-    return files
-      .filter(
+    const allFiles = files.filter(
       (f) =>
         !f.includes("/bin/") &&
-      !f.includes("/obj/") &&
-      !f.includes("node_modules") &&
+        !f.includes("/obj/") &&
+        !f.includes("node_modules") &&
         // f.includes("2024-fall-alex") &&
         f.endsWith(".md")
-      );
+    );
+
+    return allFiles.slice(0, 30);
   }),
   getFileContents: publicProcedure.input(z.string()).query(({ input }) => {
     try {
@@ -50,14 +51,21 @@ export const filesRouter = {
     )
     .mutation(async ({ input: { fileName } }) => {
       const fileContents = readFileSync(fileName, "utf-8");
+
+      if (!fileContents) {
+        console.log("file contents empty", fileName);
+        return;
+      }
+
       const existingEmbedding = await getFileByName(fileName);
       if (existingEmbedding) {
         console.log(`Embedding for file "${fileName}" already exists.`);
         return;
       }
       const embedding = await getEmbeddings({ content: fileContents });
-      
-      console.log("got embedding", embedding, embedding.length);
+
+      // console.log("got embedding", embedding, embedding.length);
+      // console.log("got embedding", fileName, embedding.length);
       await insertEmbedding(fileName, fileContents, embedding);
     }),
   getSimilarFiles: publicProcedure

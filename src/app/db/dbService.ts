@@ -39,7 +39,7 @@ export async function getFileByName(
     FROM 
       embeddings 
     WHERE 
-      file_name = $<fileName>
+      file_name = $<fileName> 
     `,
     { fileName }
   );
@@ -59,7 +59,7 @@ export async function insertEmbedding(
   fileContents: string,
   embedding: number[]
 ): Promise<void> {
-  console.log("embedding", embedding);
+  // console.log("embedding", embedding);
   await db.none(
     `
       INSERT INTO embeddings (file_name, file_contents, embedding)
@@ -94,11 +94,14 @@ export async function getEmbeddingsBySimilarity(
       file_name AS "fileName", 
       file_contents AS "fileContents", 
       embedding AS "embedding",
-      1 - (embedding <=> $<queryEmbedding>::vector) AS similarity
+      (embedding <=> $<queryEmbedding>::vector) AS similarity
     FROM 
       embeddings
+    WHERE 
+      file_name LIKE '%assignments%' AND
+      (embedding <=> $<queryEmbedding>::vector) < 0.4
     ORDER BY 
-      embedding <=> $<queryEmbedding>::vector asc
+      embedding <=> $<queryEmbedding>::vector ASC
     LIMIT $<limit>
     `,
     { queryEmbedding, limit }

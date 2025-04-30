@@ -12,7 +12,8 @@
 				"dbaeumer.vscode-eslint",
 				"dsznajder.es7-react-js-snippets",
 				"esbenp.prettier-vscode",
-				"bradlc.vscode-tailwindcss"
+				"bradlc.vscode-tailwindcss",
+				"humao.rest-client"
 			]
 		}
 	},

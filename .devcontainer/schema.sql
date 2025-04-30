@@ -9,3 +9,9 @@ CREATE EXTENSION IF NOT EXISTS vectorscale CASCADE;
 --   file_contents text,
 --   embedding vector(768)
 -- );
+
+CREATE TABLE embeddings (
+  file_name text primary key,
+  file_contents text,
+  embedding vector(1024)
+);
