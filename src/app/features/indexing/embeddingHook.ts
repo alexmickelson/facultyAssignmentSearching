@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "~/trpc/trpcClient";
 import { CharacterTextSplitter } from "@langchain/textsplitters";
-import { getEmbeddings } from "./embeddingUtils";
+import { getEmbeddings } from "../../aiUtils";
 
 export const useMakeEmbeddingMutation = () => {
   const trpc = useTRPC();

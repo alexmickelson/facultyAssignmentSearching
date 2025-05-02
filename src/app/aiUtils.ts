@@ -1,6 +1,5 @@
 import { pipeline } from "@huggingface/transformers";
 
-
 // local version
 // export async function getEmbeddings(contentObject: {
 //   content: string;
@@ -36,13 +35,14 @@ import { pipeline } from "@huggingface/transformers";
 //   return [...pipelineResult.data];
 // }
 
-
 // ollama version
 
 const ollamaUrl = "http://nixos-vm:11434";
 const ollamaModel = "mxbai-embed-large";
 
-export async function getEmbeddings(contentObject: { content: string }): Promise<number[]> {
+export async function getEmbeddings(contentObject: {
+  content: string;
+}): Promise<number[]> {
   const apiUrl = ollamaUrl + "/api/embed";
   const requestBody = {
     model: ollamaModel,
@@ -64,8 +64,11 @@ export async function getEmbeddings(contentObject: { content: string }): Promise
 
     const responseData = await response.json();
 
-    if (!responseData.embeddings || !Array.isArray(responseData.embeddings[0])) {
-      console.log(responseData)
+    if (
+      !responseData.embeddings ||
+      !Array.isArray(responseData.embeddings[0])
+    ) {
+      console.log(responseData);
       throw new Error("Invalid response format from embedding API");
     }
 
@@ -76,4 +79,32 @@ export async function getEmbeddings(contentObject: { content: string }): Promise
     console.error("Error fetching embeddings:", error);
     throw error;
   }
+}
+
+export async function getAiResponse(prompt: string): Promise<string> {
+  // const model = "qwen3:14b";
+  const model = "gemma3:12b";
+  const url = ollamaUrl + "/api/generate";
+  const body = {
+    model,
+    prompt,
+    stream: false,
+  };
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  // console.log("ollama response", await response.text());
+  if (!response.ok) {
+    console.log(await response.text());
+    throw new Error(
+      `Error fetching AI response: ${response.status} ${response.statusText}`
+    );
+  }
+  const data = await response.json();
+
+  return data.response;
 }

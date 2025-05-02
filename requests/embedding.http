@@ -1,8 +1,0 @@
-###
-
-curl http://nixos-vm:11434/api/embed -d '{
-  "model": "mxbai-embed-large",
-  "input": "Why is the sky blue?"
-}'
-
-###

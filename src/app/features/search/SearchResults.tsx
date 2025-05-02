@@ -1,5 +1,5 @@
 import { useEffect, useState, type FC } from "react";
-import { getEmbeddings } from "../indexing/embeddingUtils";
+import { getEmbeddings } from "../../aiUtils";
 import { Spinner } from "../indexing/SingleFile";
 import { DisplayEmbeddingResults } from "./DisplayEmbeddingResults";
 

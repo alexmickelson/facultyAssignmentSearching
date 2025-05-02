@@ -2,6 +2,7 @@ import { useState, type FC } from "react";
 import { Spinner } from "../indexing/SingleFile";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTRPC } from "~/trpc/trpcClient";
+import { GenerationLayout } from "./assignmentGeneration/GenerationLayout";
 
 export const DisplayEmbeddingResults: FC<{
   embedding: number[];
@@ -46,6 +47,7 @@ export const DisplayEmbeddingResults: FC<{
             ))}
         </div>
       )}
+      {similarFilesQuery.data && <GenerationLayout similarFiles={similarFilesQuery.data} />}
     </div>
   );
 };

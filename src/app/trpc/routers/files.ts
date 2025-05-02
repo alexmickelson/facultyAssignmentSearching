@@ -3,14 +3,29 @@ import { publicProcedure } from "../utils/trpc";
 import { readdirSync } from "fs";
 import { join } from "path";
 import { z } from "zod";
-import { readFileSync } from "fs";
 import {
   EmbeddingSchema,
   getEmbeddingsBySimilarity,
   getFileByName,
   insertEmbedding,
 } from "~/db/dbService";
-import { getEmbeddings } from "~/pages/indexing/embeddingUtils";
+import { getEmbeddings } from "~/aiUtils";
+import { promises as fsPromises } from "fs";
+
+export async function readFileContentsServerOnly(filePath: string): Promise<{
+  fileContents: string;
+  fileName: string;
+}> {
+  try {
+    const fileContents = await fsPromises.readFile(filePath, "utf-8");
+    return { fileContents, fileName: filePath };
+  } catch (error) {
+    console.log(error);
+    throw new Error(
+      `Unable to read file: ${error instanceof Error ? error.message : error}`
+    );
+  }
+}
 
 export const filesRouter = {
   filesList: publicProcedure.query(() => {
@@ -28,16 +43,7 @@ export const filesRouter = {
     return allFiles.slice(0, 30);
   }),
   getFileContents: publicProcedure.input(z.string()).query(({ input }) => {
-    try {
-      const fileContents = readFileSync(input, "utf-8");
-      // console.log("file contents", fileContents);
-      return { fileContents: fileContents, fileName: input };
-    } catch (error) {
-      console.log(error);
-      throw new Error(
-        `Unable to read file: ${error instanceof Error ? error.message : error}`
-      );
-    }
+    return readFileContentsServerOnly(input);
   }),
   getEmbedding: publicProcedure.input(z.string()).query(async ({ input }) => {
     const embedding = await getFileByName(input);
@@ -50,7 +56,7 @@ export const filesRouter = {
       })
     )
     .mutation(async ({ input: { fileName } }) => {
-      const fileContents = readFileSync(fileName, "utf-8");
+      const { fileContents } = await readFileContentsServerOnly(fileName);
 
       if (!fileContents) {
         console.log("file contents empty", fileName);
@@ -64,8 +70,6 @@ export const filesRouter = {
       }
       const embedding = await getEmbeddings({ content: fileContents });
 
-      // console.log("got embedding", embedding, embedding.length);
-      // console.log("got embedding", fileName, embedding.length);
       await insertEmbedding(fileName, fileContents, embedding);
     }),
   getSimilarFiles: publicProcedure

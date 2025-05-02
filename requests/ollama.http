@@ -1,0 +1,17 @@
+###
+
+curl http://nixos-vm:11434/api/embed -d '{
+  "model": "mxbai-embed-large",
+  "input": "Why is the sky blue?"
+}'
+
+###
+
+
+curl http://nixos-vm:11434/api/generate -d '{
+  "model": "qwen3:14b",
+  "prompt": "What color is the sky at different times of the day?",
+  "stream": false
+}'
+
+###
