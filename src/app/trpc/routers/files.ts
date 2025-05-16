@@ -8,9 +8,10 @@ import {
   getEmbeddingsBySimilarity,
   getFileByName,
   insertEmbedding,
-} from "~/db/dbService";
-import { getEmbeddings } from "~/aiUtils";
+} from "~/utils/db/dbService";
+import { getEmbeddings } from "~/utils/aiUtils";
 import { promises as fsPromises } from "fs";
+import { pushJobToQueue } from "~/utils/redisUtils";
 
 export async function readFileContentsServerOnly(filePath: string): Promise<{
   fileContents: string;
@@ -40,7 +41,7 @@ export const filesRouter = {
         f.endsWith(".md")
     );
 
-    return allFiles.slice(0, 30);
+    return allFiles//.slice(0, 30);
   }),
   getFileContents: publicProcedure.input(z.string()).query(({ input }) => {
     return readFileContentsServerOnly(input);
@@ -68,6 +69,8 @@ export const filesRouter = {
         console.log(`Embedding for file "${fileName}" already exists.`);
         return;
       }
+
+      // pushJobToQueue({ type: "embedding", fileName });
       const embedding = await getEmbeddings({ content: fileContents });
 
       await insertEmbedding(fileName, fileContents, embedding);

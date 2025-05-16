@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { publicProcedure } from "../utils/trpc";
 import {  readFileContentsServerOnly } from "./files";
-import { getAiResponse } from "~/aiUtils";
+import { getAiResponse } from "~/utils/aiUtils";
 
 export const assignmentGenerationRouter = {
   generateAssignment: publicProcedure

@@ -46,5 +46,8 @@ services:
       - ./schema.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro
       # - ../embeddings_dump.sql:/docker-entrypoint-initdb.d/2-schema.sql:ro
 
+  redis:
+    container_name: search_redis
+    image: redis:alpine
 volumes:
   db_data:
